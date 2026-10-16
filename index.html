@@ -458,10 +458,14 @@
     if (p !== undefined) {
       p.then(() => { $('aviso').style.display = 'none'; })
        .catch(() => {
-         $('aviso').textContent = cancion.error
-           ? '⚠️ No se encontró el archivo cancion.mp3'
-           : '🎵 Toca aquí para escuchar la canción';
-         $('aviso').style.display = 'block';
+         // Damos tiempo a que el reintento de la cuerda (touchend/click) la haga sonar
+         setTimeout(() => {
+           if (!encendida || !cancion.paused) return;
+           $('aviso').textContent = cancion.error
+             ? '⚠️ No se encontró el archivo cancion.mp3'
+             : '🎵 Toca aquí para escuchar la canción';
+           $('aviso').style.display = 'block';
+         }, 900);
        });
     }
   }
@@ -549,6 +553,14 @@
   }
 
   cuerda.addEventListener('pointerup', soltarCuerda);
+
+  // iPhone/Safari solo cuenta como "gesto" el touchend o el click, no el pointerup.
+  // Si al soltar la cuerda la canción no arrancó, se reintenta aquí mismo.
+  function reintentarCancion() {
+    if (encendida && cancion.paused) reproducirCancion();
+  }
+  cuerda.addEventListener('touchend', reintentarCancion);
+  cuerda.addEventListener('click', reintentarCancion);
   cuerda.addEventListener('pointercancel', () => {
     inicioY = null;
     jalon = 0;
