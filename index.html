@@ -112,6 +112,14 @@
   #btnFirmar { background: #e64980; box-shadow: 0 6px 16px rgba(230, 73, 128, .35); transition: transform .15s, opacity .2s; }
   #btnFirmar:disabled { opacity: .45; }
   #btnNo { background: #868e96; }
+  .repetir {
+    display: block; margin: 16px auto 0; background: none; border: 1.5px solid #c9a77a; color: #8a6d4f;
+    border-radius: 999px; padding: 9px 18px; font-size: 14px; font-family: "Segoe UI", system-ui, sans-serif; cursor: pointer;
+  }
+  .final .repetir { border-color: #ffd6e0; color: #ffd6e0; margin-top: 22px; }
+  .regaño { text-align: center; color: #d6336c; font-weight: 700; font-size: 15px; min-height: 1.4em; margin: 8px 0 0; font-family: "Segoe UI", system-ui, sans-serif; }
+  .temblar { animation: temblar .45s; }
+  @keyframes temblar { 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
   #btnNo.huyendo { position: fixed; z-index: 30; transition: left .22s ease, top .22s ease; }
 
   .final { position: fixed; inset: 0; z-index: 25; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; background: radial-gradient(ellipse at 50% 40%, #4a2034, #1a1220 70%); }
@@ -171,6 +179,8 @@
         <button id="btnFirmar" disabled>Firmar 💍</button>
         <button id="btnNo">No</button>
       </div>
+      <button class="repetir" id="btnRepetir">🎵 Volver a escuchar la canción</button>
+      <p class="regaño" id="regaño"></p>
     </div>
   </div>
 
@@ -179,6 +189,7 @@
     <h1>¡Contrato firmado!</h1>
     <p>Ya no hay vuelta atrás, ahora estamos unidos 💖</p>
     <img id="firmaFinal" alt="Firma de Julieth">
+    <button class="repetir" id="btnRepetirFinal">🎵 Ahora sí, volver a escuchar la canción</button>
   </div>
 
   <!-- Modo sincronizar: abre index.html?sincronizar -->
@@ -285,7 +296,7 @@
   // Cuando termina la canción aparece el contrato
   cancion.addEventListener('ended', () => {
     clearInterval(corazones);
-    setTimeout(abrirContrato, 800);
+    if (!$('final').classList.contains('visible')) setTimeout(abrirContrato, 800);
   });
 
   // ---------------- Contrato ----------------
@@ -328,6 +339,20 @@
     $('final').classList.add('visible');
     if (navigator.vibrate) navigator.vibrate([60, 40, 60]);
     setInterval(soltarCorazon, 250);
+  });
+
+  // ---------------- Volver a escuchar (solo después de firmar) ----------------
+  const regaños = ['Primero firma 😏', 'Jaja no, primero la firma ✍️', 'La canción se gana firmando 💍', 'Firma y te la pongo otra vez 😌'];
+  let nRegaño = 0;
+  $('btnRepetir').addEventListener('click', () => {
+    $('regaño').textContent = regaños[nRegaño++ % regaños.length];
+    const caja = document.querySelector('.firma-caja');
+    caja.classList.remove('temblar'); void caja.offsetWidth; caja.classList.add('temblar');
+    if (navigator.vibrate) navigator.vibrate([40, 30, 40]);
+  });
+  $('btnRepetirFinal').addEventListener('click', () => {
+    cancion.currentTime = 0;
+    cancion.play();
   });
 
   // ---------------- Botón "No" que huye ----------------
