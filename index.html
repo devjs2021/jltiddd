@@ -177,8 +177,11 @@
   .indicador-estado.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   .aviso {
-    position: absolute; bottom: 16px; left: 0; right: 0; text-align: center;
-    font-size: 13px; color: #ff8fa3; display: none; z-index: 10;
+    position: absolute; bottom: calc(20px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%);
+    display: none; z-index: 10; white-space: nowrap; cursor: pointer;
+    font: 700 16px "Segoe UI", system-ui, sans-serif; color: #fff;
+    background: #e64980; border: none; border-radius: 999px; padding: 12px 22px;
+    box-shadow: 0 6px 18px rgba(230, 73, 128, .45);
   }
 
   /* Corazones y destellos flotantes */
@@ -278,7 +281,7 @@
       <p class="linea siguiente" id="lSiguiente"></p>
     </div>
 
-    <div class="aviso" id="aviso">No se pudo reproducir la canción automáticamente</div>
+    <button class="aviso" id="aviso">🎵 Toca aquí para escuchar la canción</button>
   </div>
 
   <!-- Contrato -->
@@ -328,7 +331,7 @@
     <textarea id="syncSalida" style="display:none" readonly></textarea>
   </div>
 
-  <audio id="cancion" src="Mirar%20las%20Estrellas.mp3" preload="auto"></audio>
+  <audio id="cancion" src="cancion.mp3" preload="auto" playsinline></audio>
 
 <script>
   // =====================================================================
@@ -449,8 +452,28 @@
     }, 2200);
   }
 
+  // El celular solo deja sonar música si play() se llama directo dentro del toque
+  function reproducirCancion() {
+    const p = cancion.play();
+    if (p !== undefined) {
+      p.then(() => { $('aviso').style.display = 'none'; })
+       .catch(() => {
+         $('aviso').textContent = cancion.error
+           ? '⚠️ No se encontró el archivo cancion.mp3'
+           : '🎵 Toca aquí para escuchar la canción';
+         $('aviso').style.display = 'block';
+       });
+    }
+  }
+  $('aviso').addEventListener('click', () => {
+    if (cancion.error) cancion.load();
+    reproducirCancion();
+  });
+
   function alternarLampara() {
     encendida = !encendida;
+    // La canción primero, antes de cualquier otro sonido o animación
+    if (encendida) reproducirCancion();
     reproducirClicLampara(encendida);
 
     if (navigator.vibrate) {
@@ -467,15 +490,6 @@
       document.body.classList.remove('pausado');
       document.body.classList.add('on', 'chispa');
       setTimeout(() => document.body.classList.remove('chispa'), 400);
-
-      const playPromise = cancion.play();
-      if (playPromise !== undefined) {
-        playPromise.then(() => {
-          $('aviso').style.display = 'none';
-        }).catch(() => {
-          $('aviso').style.display = 'block';
-        });
-      }
 
       pista.textContent = "jala la cuerda para pausar 💡";
       mostrarAvisoEstado(cancion.currentTime > 1 ? "▶ Reanudado" : "✨ Encendido");
