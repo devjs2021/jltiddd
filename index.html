@@ -4,133 +4,241 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0b0a12">
-<title>Para Julieth</title>
+<title>Para Julieth 💛</title>
 <style>
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body {
     margin: 0; height: 100%; overflow: hidden;
     font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
-    background: #0b0a12; color: #fff;
+    background: #08070d; color: #fff;
     -webkit-user-select: none; user-select: none;
     overscroll-behavior: none; touch-action: none;
   }
-  body { transition: background 1.2s ease; }
-  body.on { background: radial-gradient(ellipse at 50% 30%, #3a2a1a 0%, #1a1220 60%, #0b0a12 100%); }
+  body { transition: background 1.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  body.on { background: radial-gradient(ellipse at 50% 28%, #3d2c1c 0%, #1c1322 55%, #08070d 100%); }
 
-  .escena { position: relative; height: 100dvh; width: 100%; display: flex; flex-direction: column; align-items: center; }
-
-  /* ---------- Lámpara colgante ---------- */
-  .lampara { position: relative; display: flex; flex-direction: column; align-items: center; z-index: 2; }
-  .cable { width: 3px; height: 12vh; background: #3b3743; }
-  .pantalla {
-    width: 150px; height: 80px; position: relative;
-    background: linear-gradient(180deg, #4a4453, #2c2833);
-    clip-path: polygon(22% 0, 78% 0, 100% 100%, 0 100%);
-    border-radius: 4px; transition: background .6s;
+  /* ---------- Fondo de Estrellas ---------- */
+  .estrellas-cielo {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    overflow: hidden;
   }
-  body.on .pantalla { background: linear-gradient(180deg, #ffb35c, #e0782a); }
-  .foco { width: 48px; height: 48px; border-radius: 50%; margin-top: -24px; background: #55505e; transition: background .4s, box-shadow .6s; }
-  body.on .foco { background: #fff6d6; box-shadow: 0 0 30px 12px #ffd58a, 0 0 90px 40px rgba(255, 190, 90, .45); }
+  .estrella {
+    position: absolute; border-radius: 50%; background: #ffffff;
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
+    animation: titilar var(--dur, 3s) ease-in-out infinite alternate;
+    opacity: var(--op, 0.7);
+  }
+  @keyframes titilar {
+    0% { opacity: 0.15; transform: scale(0.65); }
+    50% { opacity: 0.95; transform: scale(1.25); }
+    100% { opacity: 0.35; transform: scale(0.85); }
+  }
 
+  .escena { position: relative; height: 100dvh; width: 100%; display: flex; flex-direction: column; align-items: center; z-index: 1; }
+
+  /* ---------- Lámpara colgante con física ---------- */
+  .lampara-contenedor {
+    position: relative; display: flex; flex-direction: column; align-items: center;
+    transform-origin: 50% 0%; z-index: 5;
+    transition: transform 0.15s ease-out;
+  }
+  body.jalando .lampara-contenedor {
+    transform: rotate(2deg) translateY(3px);
+  }
+  .lampara-contenedor.balanceo {
+    animation: bamboleoLampara 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  }
+  @keyframes bamboleoLampara {
+    0%   { transform: rotate(2.4deg) translateY(3px); }
+    22%  { transform: rotate(-1.7deg) translateY(1px); }
+    45%  { transform: rotate(1.1deg); }
+    68%  { transform: rotate(-0.5deg); }
+    88%  { transform: rotate(0.2deg); }
+    100% { transform: rotate(0deg); }
+  }
+
+  .lampara { position: relative; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+  .cable { width: 3px; height: 12vh; min-height: 55px; background: #3b3743; }
+  .pantalla {
+    width: 154px; height: 82px; position: relative;
+    background: linear-gradient(180deg, #443e4d, #27232d);
+    clip-path: polygon(22% 0, 78% 0, 100% 100%, 0 100%);
+    border-radius: 4px; transition: background .6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  body.on .pantalla { background: linear-gradient(180deg, #ffb35c, #e0782a); box-shadow: 0 0 25px rgba(255, 179, 92, 0.4); }
+
+  .foco {
+    width: 50px; height: 50px; border-radius: 50%; margin-top: -25px;
+    background: #4c4755; transition: background .4s, box-shadow .6s;
+    cursor: pointer;
+  }
+  body.on .foco {
+    background: #fff8e1;
+    box-shadow: 0 0 35px 14px #ffd68a, 0 0 110px 45px rgba(255, 190, 90, .55);
+  }
+  body.on.chispa .foco {
+    animation: destelloFoco .35s ease-out;
+  }
+  @keyframes destelloFoco {
+    0% { filter: brightness(0.4); }
+    30% { filter: brightness(1.7); }
+    60% { filter: brightness(0.85); }
+    100% { filter: brightness(1); }
+  }
+
+  /* Cono de luz cálido */
   .luz {
     position: absolute; top: calc(12vh + 70px); left: 50%; transform: translateX(-50%);
-    width: 160vw; height: 90vh; pointer-events: none; z-index: 1;
-    background: radial-gradient(ellipse at 50% 0%, rgba(255, 210, 130, .5) 0%, rgba(255, 190, 100, .15) 35%, transparent 70%);
-    clip-path: polygon(44% 0, 56% 0, 100% 100%, 0 100%);
-    opacity: 0; transition: opacity 1s ease;
+    width: 160vw; height: 92vh; pointer-events: none; z-index: 1;
+    background: radial-gradient(ellipse at 50% 0%, rgba(255, 215, 135, .55) 0%, rgba(255, 190, 100, .18) 38%, transparent 72%);
+    clip-path: polygon(43% 0, 57% 0, 100% 100%, 0 100%);
+    opacity: 0; transition: opacity 1.1s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
   body.on .luz { opacity: 1; }
 
+  /* ---------- Cuerda interactiva (Interruptor) ---------- */
   .cuerda {
-    position: absolute; top: calc(12vh + 52px); left: calc(50% + 54px);
+    position: absolute; top: calc(12vh + 54px); left: calc(50% + 55px);
     display: flex; flex-direction: column; align-items: center;
-    z-index: 3; touch-action: none; cursor: grab; padding: 0 22px 22px;
+    z-index: 6; touch-action: none; cursor: grab; padding: 0 26px 26px;
   }
-  .cuerda .hilo { width: 2px; height: 80px; background: #c9c2b3; transition: height .35s cubic-bezier(.3, 1.6, .5, 1); }
-  .cuerda .bolita { width: 22px; height: 22px; border-radius: 50%; background: #e8c27a; animation: latido 1.6s infinite; }
+  .cuerda:active { cursor: grabbing; }
+  .cuerda .hilo {
+    width: 2.5px; height: 85px; background: #c9c2b3;
+    transition: height .42s cubic-bezier(0.175, 0.885, 0.32, 1.4);
+    box-shadow: 0 0 4px rgba(0,0,0,0.5);
+  }
+  .cuerda .bolita {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #fff1ba, #d4a242);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    animation: latidoBolita 1.7s infinite;
+    transition: transform .15s ease;
+  }
+  .cuerda:hover .bolita { transform: scale(1.12); }
   .cuerda.arrastrando .hilo { transition: none; }
-  body.on .cuerda .bolita { animation: none; }
-  @keyframes latido { 0%, 100% { box-shadow: 0 0 0 4px rgba(232,194,122,.25); } 50% { box-shadow: 0 0 0 12px rgba(232,194,122,0); } }
+  body.on .cuerda .bolita { animation: none; box-shadow: 0 0 10px rgba(232, 194, 122, 0.5); }
+  @keyframes latidoBolita {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(232, 194, 122, .25); }
+    50%      { box-shadow: 0 0 0 14px rgba(232, 194, 122, 0); }
+  }
 
+  /* Pista flotante */
   .pista {
-    position: absolute; top: calc(12vh + 180px); left: calc(50% + 14px);
-    font-size: 15px; color: #b9b2c4; transition: opacity .5s; animation: flotar 2s ease-in-out infinite;
+    position: absolute; top: calc(12vh + 185px); left: 50%; transform: translateX(-50%);
+    font-size: 15px; color: #d0c8da; transition: opacity .6s, color .5s;
+    animation: flotar 2.2s ease-in-out infinite; pointer-events: none; z-index: 4;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    white-space: nowrap;
   }
   body.on .pista { opacity: 0; }
-  @keyframes flotar { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+  body.pausado .pista { opacity: 0.95; color: #ffd89b; }
+  @keyframes flotar { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 7px); } }
 
-  /* ---------- Letra ---------- */
+  /* ---------- Letra Sincronizada ---------- */
   .letra {
-    position: absolute; left: 0; right: 0; bottom: calc(8vh + env(safe-area-inset-bottom));
-    padding: 0 22px; text-align: center; z-index: 2;
-    opacity: 0; transition: opacity 1s ease .4s;
+    position: absolute; left: 0; right: 0; bottom: calc(7vh + env(safe-area-inset-bottom));
+    padding: 0 24px; text-align: center; z-index: 3;
+    opacity: 0; transform: translateY(12px);
+    transition: opacity 0.8s ease 0.3s, transform 0.8s ease 0.3s;
+    pointer-events: none;
   }
-  body.on .letra { opacity: 1; }
-  .letra .titulo { font-size: 13px; letter-spacing: .2em; text-transform: uppercase; color: #c9a77a; margin-bottom: 18px; }
-  .letra .linea { margin: 0; line-height: 1.35; transition: all .45s ease; }
-  .letra .previa, .letra .siguiente { font-size: 16px; color: rgba(245, 230, 216, .35); min-height: 1.35em; }
+  body.on .letra { opacity: 1; transform: translateY(0); }
+  body.pausado .letra { opacity: 0.5; filter: grayscale(0.3); }
+
+  .letra .titulo {
+    font-size: 13px; letter-spacing: .25em; text-transform: uppercase;
+    color: #e5be8a; margin-bottom: 16px; font-weight: 600;
+    text-shadow: 0 0 12px rgba(229, 190, 138, 0.4);
+  }
+  .letra .linea { margin: 0; line-height: 1.4; transition: all .45s ease; }
+  .letra .previa, .letra .siguiente {
+    font-size: clamp(14px, 3.8vw, 17px);
+    color: rgba(245, 230, 216, .38); min-height: 1.4em;
+  }
   .letra .actual {
-    font-size: clamp(22px, 6.5vw, 30px); font-weight: 700; color: #ffe2b8; margin: 10px 0;
-    text-shadow: 0 0 18px rgba(255, 180, 90, .6); min-height: 2.7em;
-    display: flex; align-items: center; justify-content: center;
+    font-size: clamp(22px, 6.2vw, 32px); font-weight: 700; color: #fff1d4;
+    margin: 12px 0; text-shadow: 0 0 22px rgba(255, 185, 95, .7);
+    min-height: 2.8em; display: flex; align-items: center; justify-content: center;
   }
-  .letra .actual.cambio { animation: aparecer .45s ease; }
-  @keyframes aparecer { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .letra .actual.cambio { animation: aparecerLetra .45s cubic-bezier(0.16, 1, 0.3, 1); }
+  @keyframes aparecerLetra {
+    from { opacity: 0; transform: translateY(12px) scale(0.96); }
+    to   { opacity: 1; transform: none; }
+  }
 
-  .aviso { position: absolute; bottom: 12px; left: 0; right: 0; text-align: center; font-size: 12px; color: #ff8fa3; display: none; z-index: 4; }
+  .indicador-estado {
+    position: absolute; top: calc(12vh + 155px); left: 50%; transform: translateX(-50%);
+    font-size: 13px; font-weight: 600; color: #ffb86c; background: rgba(25, 20, 35, 0.75);
+    padding: 6px 16px; border-radius: 999px; border: 1px solid rgba(255, 184, 108, 0.3);
+    backdrop-filter: blur(8px); opacity: 0; transition: opacity .4s ease, transform .4s ease;
+    pointer-events: none; z-index: 4; display: flex; align-items: center; gap: 6px;
+  }
+  .indicador-estado.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-  .corazon { position: absolute; bottom: -40px; font-size: 22px; pointer-events: none; z-index: 1; animation: subir linear forwards; }
-  @keyframes subir { to { transform: translateY(-110vh) rotate(25deg); opacity: 0; } }
+  .aviso {
+    position: absolute; bottom: 16px; left: 0; right: 0; text-align: center;
+    font-size: 13px; color: #ff8fa3; display: none; z-index: 10;
+  }
+
+  /* Corazones y destellos flotantes */
+  .corazon {
+    position: absolute; bottom: -45px; font-size: 24px; pointer-events: none;
+    z-index: 2; animation: subirCorazon linear forwards;
+    filter: drop-shadow(0 0 6px rgba(255, 215, 100, 0.6));
+  }
+  @keyframes subirCorazon {
+    to { transform: translateY(-115vh) rotate(30deg); opacity: 0; }
+  }
 
   /* ---------- Contrato ---------- */
   .contrato-fondo {
-    position: fixed; inset: 0; z-index: 20; display: none;
+    position: fixed; inset: 0; z-index: 30; display: none;
     align-items: center; justify-content: center; padding: 16px;
-    background: rgba(11, 10, 18, .75); backdrop-filter: blur(4px);
+    background: rgba(11, 10, 18, .82); backdrop-filter: blur(6px);
   }
-  .contrato-fondo.visible { display: flex; animation: aparecer .8s ease; }
+  .contrato-fondo.visible { display: flex; animation: aparecerContrato .8s ease; }
+  @keyframes aparecerContrato { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: none; } }
+  
   .contrato {
-    width: 100%; max-width: 420px; max-height: 92dvh; overflow: auto;
-    background: #fffaf0; color: #3d2b1f; border-radius: 14px; padding: 22px 20px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, .5);
+    width: 100%; max-width: 440px; max-height: 92dvh; overflow: auto;
+    background: #fffbf2; color: #3d2b1f; border-radius: 16px; padding: 24px 22px;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, .65);
     font-family: Georgia, "Times New Roman", serif;
     border: 2px solid #e2c99a; outline: 1px solid #e2c99a; outline-offset: -8px;
   }
-  .contrato h2 { text-align: center; margin: 0 0 4px; font-size: 22px; color: #a61e4d; }
+  .contrato h2 { text-align: center; margin: 0 0 4px; font-size: 23px; color: #a61e4d; }
   .contrato .sub { text-align: center; font-size: 13px; color: #8a6d4f; margin: 0 0 14px; font-style: italic; }
-  .contrato .cuerpo { font-size: 17px; line-height: 1.55; text-align: center; margin: 0 0 14px; }
-  .contrato .etiqueta { font-size: 13px; color: #8a6d4f; margin-bottom: 4px; }
+  .contrato ol { padding-left: 20px; margin: 0 0 16px; font-size: 14.5px; line-height: 1.55; }
+  .contrato li { margin-bottom: 8px; }
+  .contrato .etiqueta { font-size: 13.5px; color: #8a6d4f; margin-bottom: 6px; font-weight: 600; }
   .firma-caja { position: relative; }
-  #firma { width: 100%; height: 120px; background: #fff; border: 1.5px dashed #c9a77a; border-radius: 8px; touch-action: none; display: block; }
+  #firma { width: 100%; height: 125px; background: #fff; border: 1.5px dashed #c9a77a; border-radius: 8px; touch-action: none; display: block; }
   .firma-caja .placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #c9b597; font-size: 14px; pointer-events: none; }
-  .borrar { background: none; border: none; color: #8a6d4f; font-size: 13px; text-decoration: underline; padding: 6px 0; cursor: pointer; font-family: inherit; }
+  .borrar { background: none; border: none; color: #8a6d4f; font-size: 13px; text-decoration: underline; padding: 8px 0; cursor: pointer; font-family: inherit; }
   .botones { display: flex; gap: 14px; justify-content: center; margin-top: 10px; }
   .botones button {
     font-family: "Segoe UI", system-ui, sans-serif; font-size: 18px; font-weight: 700;
     border: none; border-radius: 999px; padding: 13px 28px; color: #fff; cursor: pointer;
   }
-  #btnFirmar { background: #e64980; box-shadow: 0 6px 16px rgba(230, 73, 128, .35); transition: transform .15s, opacity .2s; }
+  #btnFirmar { background: #e64980; box-shadow: 0 6px 18px rgba(230, 73, 128, .4); transition: transform .15s, opacity .2s; }
   #btnFirmar:disabled { opacity: .45; }
   #btnNo { background: #868e96; }
-  .repetir {
-    display: block; margin: 16px auto 0; background: none; border: 1.5px solid #c9a77a; color: #8a6d4f;
-    border-radius: 999px; padding: 9px 18px; font-size: 14px; font-family: "Segoe UI", system-ui, sans-serif; cursor: pointer;
+  #btnNo.huyendo { position: fixed; z-index: 40; transition: left .22s ease, top .22s ease; }
+
+  .final {
+    position: fixed; inset: 0; z-index: 35; display: none; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center; padding: 24px;
+    background: radial-gradient(ellipse at 50% 40%, #4a2034, #1a1220 70%);
   }
-  .final .repetir { border-color: #ffd6e0; color: #ffd6e0; margin-top: 22px; }
-  .regaño { text-align: center; color: #d6336c; font-weight: 700; font-size: 15px; min-height: 1.4em; margin: 8px 0 0; font-family: "Segoe UI", system-ui, sans-serif; }
-  .temblar { animation: temblar .45s; }
-  @keyframes temblar { 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
-  #btnNo.huyendo { position: fixed; z-index: 30; transition: left .22s ease, top .22s ease; }
-
-  .final { position: fixed; inset: 0; z-index: 25; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; background: radial-gradient(ellipse at 50% 40%, #4a2034, #1a1220 70%); }
-  .final.visible { display: flex; animation: aparecer 1s ease; }
+  .final.visible { display: flex; animation: aparecerContrato 1s ease; }
   .final .grande { font-size: 80px; }
-  .final h1 { color: #ffd6e0; font-size: clamp(28px, 8vw, 40px); margin: 10px 0; }
+  .final h1 { color: #ffd6e0; font-size: clamp(28px, 8vw, 42px); margin: 10px 0; }
   .final p { color: #f5e6d8; font-size: 18px; margin: 0; }
-  .final img { margin-top: 18px; max-width: 70%; background: #fffaf0; border-radius: 8px; padding: 6px; }
+  .final img { margin-top: 18px; max-width: 75%; background: #fffaf0; border-radius: 10px; padding: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
-  /* ---------- Modo sincronizar (solo para ti) ---------- */
-  .sync { position: fixed; inset: 0; z-index: 50; background: #14121c; padding: 16px; display: none; flex-direction: column; gap: 10px; overflow: auto; touch-action: auto; -webkit-user-select: text; user-select: text; }
+  /* ---------- Modo sincronizar ---------- */
+  .sync { position: fixed; inset: 0; z-index: 60; background: #14121c; padding: 16px; display: none; flex-direction: column; gap: 10px; overflow: auto; touch-action: auto; -webkit-user-select: text; user-select: text; }
   .sync.visible { display: flex; }
   .sync textarea { width: 100%; flex: 1; min-height: 160px; background: #1f1c29; color: #fff; border: 1px solid #3b3743; border-radius: 8px; padding: 10px; font-size: 14px; }
   .sync button { font-size: 16px; padding: 12px; border-radius: 8px; border: none; background: #e64980; color: #fff; font-weight: 700; }
@@ -139,19 +247,30 @@
 </style>
 </head>
 <body>
+  <!-- Fondo estrellado -->
+  <div class="estrellas-cielo" id="estrellasCielo"></div>
+
   <div class="escena">
     <div class="luz"></div>
-    <div class="lampara">
-      <div class="cable"></div>
-      <div class="pantalla"></div>
-      <div class="foco"></div>
-    </div>
-    <div class="cuerda" id="cuerda">
-      <div class="hilo" id="hilo"></div>
-      <div class="bolita"></div>
-    </div>
-    <div class="pista">jala la cuerdita 👆</div>
 
+    <!-- Lámpara colgante con oscilación física -->
+    <div class="lampara-contenedor" id="lamparaContenedor">
+      <div class="lampara" id="lampara">
+        <div class="cable"></div>
+        <div class="pantalla"></div>
+        <div class="foco" id="foco"></div>
+      </div>
+      <div class="cuerda" id="cuerda" title="Jala la cuerda">
+        <div class="hilo" id="hilo"></div>
+        <div class="bolita"></div>
+      </div>
+    </div>
+
+    <!-- Indicador de estado y pista -->
+    <div class="indicador-estado" id="indicadorEstado"></div>
+    <div class="pista" id="pista">jala la cuerdita 👆</div>
+
+    <!-- Letra de la canción -->
     <div class="letra">
       <div class="titulo">Mirar las estrellas</div>
       <p class="linea previa" id="lPrevia"></p>
@@ -159,16 +278,21 @@
       <p class="linea siguiente" id="lSiguiente"></p>
     </div>
 
-    <div class="aviso" id="aviso">No se pudo reproducir la canción</div>
+    <div class="aviso" id="aviso">No se pudo reproducir la canción automáticamente</div>
   </div>
 
   <!-- Contrato -->
   <div class="contrato-fondo" id="contrato">
     <div class="contrato">
-      <h2>Contrato</h2>
-      <p class="sub">Para iniciar un vínculo más entre tú y yo</p>
-      <p class="cuerpo">Aunque sé que las cláusulas de este contrato no te gustan, debo aclarar que no eres una bolsa de perico.</p>
-      <p class="cuerpo">Acepta el contrato, estoy seguro de que estarás bien conmigo 💛</p>
+      <h2>Contrato de Noviazgo</h2>
+      <p class="sub">Celebrado bajo la luz de una lámpara y las estrellas</p>
+      <ol>
+        <li>Me comprometo a hacerte reír todos los días, aunque sea con chistes malos.</li>
+        <li>Tendrás derecho ilimitado a abrazos, besos y mimos.</li>
+        <li>Prometo escucharte, cuidarte y apoyarte en todo.</li>
+        <li>Saldremos a mirar las estrellas juntos siempre que se pueda.</li>
+        <li>Este contrato no tiene fecha de vencimiento.</li>
+      </ol>
       <div class="etiqueta">Firma de Julieth:</div>
       <div class="firma-caja">
         <canvas id="firma"></canvas>
@@ -179,20 +303,17 @@
         <button id="btnFirmar" disabled>Firmar 💍</button>
         <button id="btnNo">No</button>
       </div>
-      <button class="repetir" id="btnRepetir">🎵 Volver a escuchar la canción</button>
-      <p class="regaño" id="regaño"></p>
     </div>
   </div>
 
   <div class="final" id="final">
     <div class="grande">🥰</div>
     <h1>¡Contrato firmado!</h1>
-    <p>Ya no hay vuelta atrás, ahora estamos unidos 💖</p>
+    <p>Ahora eres oficialmente mi novia 💖</p>
     <img id="firmaFinal" alt="Firma de Julieth">
-    <button class="repetir" id="btnRepetirFinal">🎵 Ahora sí, volver a escuchar la canción</button>
   </div>
 
-  <!-- Modo sincronizar: abre index.html?sincronizar -->
+  <!-- Modo sincronizar: index.html?sincronizar -->
   <div class="sync" id="sync">
     <div class="info">
       <b>Sincronizar letra</b><br>
@@ -211,67 +332,222 @@
 
 <script>
   // =====================================================================
-  //  LETRA: [segundo en que empieza, "texto de la línea"]
-  //  Pega aquí la letra. La forma fácil de sacar los tiempos es abrir
-  //  la página con  index.html?sincronizar  y seguir los pasos.
+  //  LETRA SINCRONIZADA CON MARCAS DE TIEMPO EXACTAS
   // =====================================================================
   const LETRA = [
-    [0, "Para ti, Julieth 💛"],
-    // [12.5, "primera línea de la canción"],
-    // [16.0, "segunda línea de la canción"],
+    [0.0,  "Para ti, Julieth 💛"],
+    [1.4,  "Yo no pretendía que ocurriera,"],
+    [4.8,  "ni que por mi mente pasaras,"],
+    [7.4,  "y aunque sé que no debía,"],
+    [9.8,  "terminé buscando tu mirada."],
+    [12.2, "Y cómo no, si tienes esa risa"],
+    [15.0, "que no se encuentra en cualquier lugar,"],
+    [17.6, "de esas que llegan sin permiso"],
+    [19.4, "y sin querer te hacen quedar."],
+    [21.8, "Y no sé qué tienes,"],
+    [24.1, "ni quiero averiguarlo,"],
+    [26.5, "hay cosas tan bonitas"],
+    [28.2, "que es mejor no explicarlas."],
+    [31.0, "Y aunque intento hacerme el distraído,"],
+    [34.1, "siempre termino por mirarte,"],
+    [36.3, "como quien mira las estrellas"],
+    [38.5, "sabiendo que no puede alcanzarlas... ✨"],
+    [42.5, "💛 Para ti, por siempre Julieth 💛"]
   ];
 
   const $ = id => document.getElementById(id);
   const cancion = $('cancion');
+  const lamparaContenedor = $('lamparaContenedor');
+  const cuerda = $('cuerda'), hilo = $('hilo');
+  const pista = $('pista');
+  const indicadorEstado = $('indicadorEstado');
   const params = new URLSearchParams(location.search);
 
-  // ---------------- Lámpara ----------------
-  const cuerda = $('cuerda'), hilo = $('hilo');
-  const LARGO = 80, MAX_JALON = 90, UMBRAL = 40;
-  let inicioY = null, jalon = 0, encendida = false, corazones = null;
+  // ---------------- Fondo de Estrellas ----------------
+  const cielo = $('estrellasCielo');
+  const numEstrellas = 75;
+  for (let i = 0; i < numEstrellas; i++) {
+    const star = document.createElement('div');
+    star.className = 'estrella';
+    const s = 1.2 + Math.random() * 2.8;
+    star.style.width = s + 'px';
+    star.style.height = s + 'px';
+    star.style.left = Math.random() * 100 + 'vw';
+    star.style.top = Math.random() * 95 + 'vh';
+    star.style.setProperty('--dur', (2 + Math.random() * 3.5) + 's');
+    star.style.setProperty('--op', (0.3 + Math.random() * 0.7).toFixed(2));
+    star.style.animationDelay = (Math.random() * 3) + 's';
+    cielo.appendChild(star);
+  }
 
-  function alternar() {
+  // ---------------- Sonido de Interruptor de Lámpara (Web Audio API) ----------------
+  let audioCtx = null;
+  function reproducirClicLampara(encendiendo) {
+    try {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      const now = audioCtx.currentTime;
+
+      // 1. Chasquido mecánico inicial (burst de ruido de alta frecuencia)
+      const bufferSize = Math.floor(audioCtx.sampleRate * 0.022);
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const output = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = (Math.random() * 2 - 1) * Math.exp(-i / (audioCtx.sampleRate * 0.004));
+      }
+      const whiteNoise = audioCtx.createBufferSource();
+      whiteNoise.buffer = buffer;
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(encendiendo ? 2700 : 2200, now);
+      filter.Q.setValueAtTime(3.8, now);
+
+      const noiseGain = audioCtx.createGain();
+      noiseGain.gain.setValueAtTime(0.42, now);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.022);
+
+      whiteNoise.connect(filter);
+      filter.connect(noiseGain);
+      noiseGain.connect(audioCtx.destination);
+      whiteNoise.start(now);
+
+      // 2. Golpe de resonancia del interruptor de resorte
+      const osc = audioCtx.createOscillator();
+      const oscGain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(encendiendo ? 300 : 240, now);
+      osc.frequency.exponentialRampToValueAtTime(70, now + 0.038);
+
+      oscGain.gain.setValueAtTime(0.35, now);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.038);
+
+      osc.connect(oscGain);
+      oscGain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.04);
+    } catch (e) {
+      // Ignorar si el navegador bloquea AudioContext
+    }
+  }
+
+  // ---------------- Lámpara con efecto de jalar y alternar (Play / Pause) ----------------
+  const LARGO = 85, MAX_JALON = 95, UMBRAL_JALON = 18;
+  let inicioY = null, jalon = 0, encendida = false, corazones = null;
+  let avisoTimer = null;
+
+  function mostrarAvisoEstado(texto) {
+    clearTimeout(avisoTimer);
+    indicadorEstado.textContent = texto;
+    indicadorEstado.classList.add('visible');
+    avisoTimer = setTimeout(() => {
+      indicadorEstado.classList.remove('visible');
+    }, 2200);
+  }
+
+  function alternarLampara() {
     encendida = !encendida;
-    document.body.classList.toggle('on', encendida);
-    if (navigator.vibrate) navigator.vibrate(30);
+    reproducirClicLampara(encendida);
+
+    if (navigator.vibrate) {
+      navigator.vibrate([25, 35]);
+    }
+
+    // Efecto de bamboleo físico en la lámpara
+    lamparaContenedor.classList.remove('balanceo');
+    void lamparaContenedor.offsetWidth;
+    lamparaContenedor.classList.add('balanceo');
+
     if (encendida) {
-      cancion.play().catch(() => { $('aviso').style.display = 'block'; });
-      corazones = setInterval(soltarCorazon, 500);
+      // Encendida: Luz encendida, destello de foco y reproducir canción
+      document.body.classList.remove('pausado');
+      document.body.classList.add('on', 'chispa');
+      setTimeout(() => document.body.classList.remove('chispa'), 400);
+
+      const playPromise = cancion.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          $('aviso').style.display = 'none';
+        }).catch(() => {
+          $('aviso').style.display = 'block';
+        });
+      }
+
+      pista.textContent = "jala la cuerda para pausar 💡";
+      mostrarAvisoEstado(cancion.currentTime > 1 ? "▶ Reanudado" : "✨ Encendido");
+
+      if (!corazones) {
+        corazones = setInterval(soltarCorazon, 480);
+      }
     } else {
+      // Apagada: Se apaga la luz, se pausa la canción y se detienen corazones
+      document.body.classList.remove('on');
+      document.body.classList.add('pausado');
+
       cancion.pause();
       clearInterval(corazones);
+      corazones = null;
+
+      pista.textContent = "jala la cuerdita para reanudar ▶";
+      mostrarAvisoEstado("⏸ Canción pausada");
     }
   }
 
   function soltarCorazon() {
     const c = document.createElement('div');
     c.className = 'corazon';
-    c.textContent = ['💛', '💖', '✨', '⭐'][Math.floor(Math.random() * 4)];
-    c.style.left = Math.random() * 100 + 'vw';
-    c.style.animationDuration = 4 + Math.random() * 3 + 's';
+    c.textContent = ['💛', '✨', '💖', '⭐', '💫'][Math.floor(Math.random() * 5)];
+    c.style.left = (Math.random() * 92 + 4) + 'vw';
+    c.style.animationDuration = (3.8 + Math.random() * 3) + 's';
     document.body.appendChild(c);
-    setTimeout(() => c.remove(), 7500);
+    setTimeout(() => c.remove(), 7000);
   }
 
+  // Interacción de arrastre y clic en la cuerda
   cuerda.addEventListener('pointerdown', e => {
-    inicioY = e.clientY; jalon = 0;
+    inicioY = e.clientY;
+    jalon = 0;
     cuerda.classList.add('arrastrando');
+    document.body.classList.add('jalando');
     cuerda.setPointerCapture(e.pointerId);
   });
+
   cuerda.addEventListener('pointermove', e => {
     if (inicioY === null) return;
     jalon = Math.max(0, Math.min(MAX_JALON, e.clientY - inicioY));
-    hilo.style.height = LARGO + jalon + 'px';
+    hilo.style.height = (LARGO + jalon) + 'px';
   });
-  function soltar() {
+
+  function soltarCuerda() {
     if (inicioY === null) return;
-    if (jalon >= UMBRAL || jalon < 5) alternar();
+    // Si se jaló hacia abajo (>= UMBRAL_JALON) o fue un toque/clic (< UMBRAL_JALON), alternar
+    alternarLampara();
+
     inicioY = null;
+    jalon = 0;
     cuerda.classList.remove('arrastrando');
+    document.body.classList.remove('jalando');
     hilo.style.height = LARGO + 'px';
   }
-  cuerda.addEventListener('pointerup', soltar);
-  cuerda.addEventListener('pointercancel', soltar);
+
+  cuerda.addEventListener('pointerup', soltarCuerda);
+  cuerda.addEventListener('pointercancel', () => {
+    inicioY = null;
+    jalon = 0;
+    cuerda.classList.remove('arrastrando');
+    document.body.classList.remove('jalando');
+    hilo.style.height = LARGO + 'px';
+  });
+
+  // También permitir tocar el foco o pantalla de la lámpara directamente
+  $('lampara').addEventListener('click', e => {
+    if (e.target.closest('#cuerda')) return;
+    alternarLampara();
+  });
 
   // ---------------- Letra sincronizada ----------------
   let lineaActual = -1;
@@ -280,26 +556,35 @@
     lineaActual = i;
     $('lPrevia').textContent = i > 0 ? LETRA[i - 1][1] : '';
     $('lActual').textContent = i >= 0 ? LETRA[i][1] : '';
-    $('lSiguiente').textContent = LETRA[i + 1] ? LETRA[i + 1][1] : '';
+    $('lSiguiente').textContent = (i + 1 < LETRA.length) ? LETRA[i + 1][1] : '';
     const el = $('lActual');
-    el.classList.remove('cambio'); void el.offsetWidth; el.classList.add('cambio');
+    el.classList.remove('cambio');
+    void el.offsetWidth;
+    el.classList.add('cambio');
   }
+
   function actualizarLetra() {
     const t = cancion.currentTime;
     let i = -1;
-    for (let k = 0; k < LETRA.length; k++) if (LETRA[k][0] <= t) i = k;
+    for (let k = 0; k < LETRA.length; k++) {
+      if (LETRA[k][0] <= t) i = k;
+    }
     if (i >= 0) mostrarLinea(i);
-    if (!cancion.paused) requestAnimationFrame(actualizarLetra);
+    if (!cancion.paused && encendida) {
+      requestAnimationFrame(actualizarLetra);
+    }
   }
+
   cancion.addEventListener('play', () => requestAnimationFrame(actualizarLetra));
 
-  // Cuando termina la canción aparece el contrato
+  // Cuando termina la canción aparece el contrato de noviazgo
   cancion.addEventListener('ended', () => {
     clearInterval(corazones);
-    if (!$('final').classList.contains('visible')) setTimeout(abrirContrato, 800);
+    corazones = null;
+    setTimeout(abrirContrato, 800);
   });
 
-  // ---------------- Contrato ----------------
+  // ---------------- Contrato de Noviazgo ----------------
   const canvas = $('firma'), ctx = canvas.getContext('2d');
   let dibujando = false, haFirmado = false;
 
@@ -341,23 +626,9 @@
     setInterval(soltarCorazon, 250);
   });
 
-  // ---------------- Volver a escuchar (solo después de firmar) ----------------
-  const regaños = ['Primero firma 😏', 'Jaja no, primero la firma ✍️', 'La canción se gana firmando 💍', 'Firma y te la pongo otra vez 😌'];
-  let nRegaño = 0;
-  $('btnRepetir').addEventListener('click', () => {
-    $('regaño').textContent = regaños[nRegaño++ % regaños.length];
-    const caja = document.querySelector('.firma-caja');
-    caja.classList.remove('temblar'); void caja.offsetWidth; caja.classList.add('temblar');
-    if (navigator.vibrate) navigator.vibrate([40, 30, 40]);
-  });
-  $('btnRepetirFinal').addEventListener('click', () => {
-    cancion.currentTime = 0;
-    cancion.play();
-  });
-
   // ---------------- Botón "No" que huye ----------------
   const btnNo = $('btnNo'), btnFirmar = $('btnFirmar');
-  const frases = ['¿Segura?', 'Piénsalo 🥺', 'Nop', 'Ni lo intentes', 'Muy lenta 😏', 'Firma ya 💍'];
+  const frases = ['¿Segura?', 'Piénsalo 🥺', 'Nop', 'Ni lo intentes', 'Muy lenta 😏', 'Firma ya 💍', 'Di que sí 🥰'];
   let intentos = 0;
 
   function escapar(e) {
@@ -385,8 +656,7 @@
   btnNo.addEventListener('pointerdown', escapar);
   btnNo.addEventListener('click', escapar);
 
-  // ---------------- Atajos para probar ----------------
-  // index.html?contrato  -> salta directo al contrato
+  // ---------------- Atajos de prueba ----------------
   if (params.has('contrato')) abrirContrato();
 
   // ---------------- Modo sincronizar ----------------
